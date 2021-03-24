@@ -1,6 +1,6 @@
 package org.example.problems.arrayproblem;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class SegmentTree {
     public static void main(String[] args) {
@@ -10,25 +10,45 @@ public class SegmentTree {
     }
 
     private void constructSegmentTree() {
-        int arr[] = {1, 3, 5, 7, 9, 11};
-        constructTree(arr);
+        int arr[] = {1, 3, 5, 7, 9, 11,14,3,67,1};
+        callSegUpdate(arr, 0, arr.length - 1);
+        System.out.println("[segtree]=" + segList);
+        printSegTree(segList);
     }
 
-    private void constructTree(int[] arr) {
-        int[] segTree = new int[arr.length];
-        Arrays.fill(segTree, 0);
-//        callSegUpdate(arr, segTree);
-//        for (int index = 0; index < arr.length; index++) {
-//            updateSegmentNode(arr[index],index,segTree);
-//        }
-    }
-
-    private void callSegUpdate(int[] arr, int[] segTree, int mid, int size) {
-        if (mid > size) {
-
+    private void printSegTree(Queue<Integer> segQueue) {
+        int pow = 0;
+        while (!segQueue.isEmpty()) {
+            double size = Math.pow(2, pow);
+            for (int i = 0; i < size; i++) {
+                if (segQueue.isEmpty()) {
+                    System.out.println("");
+                    System.out.print("[termination]");
+                    return;
+                }
+                System.out.print(segQueue.poll() + " ");
+            }
+            System.out.println("");
+            pow++;
         }
-        callSegUpdate(arr, segTree, 0, mid);
-        callSegUpdate(arr, segTree, mid + 1, size);
+    }
+
+
+    Queue<Integer> segList = new LinkedList<>();
+
+    private int callSegUpdate(int[] arr, int left, int right) {
+//        System.out.println("[init]=>[left]=" + left + "=[right]=" + right);
+        if (left >= right) {
+            System.out.println("[termination=[left]=" + left + "=[right]=" + right + "=[value]=" + arr[left]);
+            segList.add(arr[left]);
+            return arr[left];
+        }
+        int mid = (left + right) / 2;
+        int value = callSegUpdate(arr, left, mid) +
+                callSegUpdate(arr, mid + 1, right);
+        System.out.println("[left]=" + left + "=[right]=" + right + "=[value]=" + value);
+        segList.add(value);
+        return value;
     }
 
 
