@@ -1,8 +1,7 @@
 package org.example.problems.javastream;
 
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,6 +10,20 @@ public class CompleteablFutureTest {
     public static void main(String[] args) {
         CompleteablFutureTest completeablFutureTest = new CompleteablFutureTest();
         completeablFutureTest.testComplete();
+    }
+
+
+    private void callCompleSolution() throws InterruptedException, ExecutionException, TimeoutException {
+        Set<Integer> prices = Collections.synchronizedSet(new HashSet<Integer>());
+        CompletableFuture<Void> return1 = CompletableFuture.runAsync(callMethod());
+        CompletableFuture<Void> return2 = CompletableFuture.runAsync(callMethod());
+        CompletableFuture<Void> return3 = CompletableFuture.runAsync(callMethod());
+        CompletableFuture<Void> combineTask = CompletableFuture.allOf(return1, return2, return1);
+        combineTask.get(3, TimeUnit.DAYS);
+    }
+
+    private Runnable callMethod() {
+        return null;
     }
 
     private void testComplete() {
@@ -50,17 +63,17 @@ public class CompleteablFutureTest {
     class SemaphoreCustom implements SemaphoreBeh {
         AtomicInteger permit;
         int maxSize;
-        ReentrantLock lock=new ReentrantLock();
-        Condition isLocked=lock.newCondition();
+        ReentrantLock lock = new ReentrantLock();
+        Condition isLocked = lock.newCondition();
 
         public SemaphoreCustom(int permit) {
-            this.maxSize=permit;
+            this.maxSize = permit;
             this.permit = new AtomicInteger(0);
         }
 
         @Override
         public void acquire() throws InterruptedException {
-            if(permit.get()==maxSize){
+            if (permit.get() == maxSize) {
                 isLocked.await();
             }
             permit.incrementAndGet();
@@ -68,8 +81,8 @@ public class CompleteablFutureTest {
 
         @Override
         public void release() {
-           permit.decrementAndGet();
-           isLocked.signal();
+            permit.decrementAndGet();
+            isLocked.signal();
         }
     }
 }
