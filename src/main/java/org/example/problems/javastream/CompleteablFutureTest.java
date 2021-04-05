@@ -31,6 +31,7 @@ public class CompleteablFutureTest {
             int finalI = i;
             CompletableFuture.supplyAsync(() -> getOrder(finalI), Executors.newCachedThreadPool())
                     .thenApplyAsync((order) -> getOrderDetail(order), Executors.newFixedThreadPool(4))
+                    .thenApply(o->o)
 //                    .exceptionally(t->new Exception("failed to ex"))
                     .thenAccept((detail) -> sendMail(detail));
         }
